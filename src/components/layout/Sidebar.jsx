@@ -43,11 +43,11 @@ export default function Sidebar() {
       label: "Master",
       icon: Box,
       children: [
-        { label: "Account", route: "#" },
-        { label: "Supplier", route: "#" },
+        { label: "Account", route: "/master/account" },
+        { label: "Supplier", route: "/master/supplier" },
         { label: "Categories", route: "/master/category" },
-        { label: "Roles", route: "#" },
-        { label: "Users", route: "#" },
+        { label: "Roles", route: "/master/role" },
+        { label: "Users", route: "/master/user" },
         
       ],
     },

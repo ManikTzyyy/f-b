@@ -3,6 +3,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function MainLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -14,7 +15,7 @@ export default function MainLayout({ children }) {
         const data = await res.json();
         setUser(data.user);
       } catch (error) {
-        toast.error(err.message || "Something is wrong!");
+        toast.error(error.message || "Something is wrong!");
       }
     };
 

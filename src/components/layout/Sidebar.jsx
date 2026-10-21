@@ -68,7 +68,7 @@ export default function Sidebar() {
     >
       <div>
         <div className="min-h-3 pb-2 my-5 text-center">
-          {expanded && "H&B Company"}
+          {expanded && "F&B Company"}
         </div>
         {menu.map((item) => {
           const Icon = item.icon;

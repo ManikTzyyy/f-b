@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Warehouse,
   ArrowLeftFromLineIcon,
   ArrowRightFromLineIcon,
   ScrollText,
@@ -31,21 +30,15 @@ export default function Sidebar() {
       ],
     },
     {
-      label: "Menu",
+      label: "Product",
       icon: Utensils,
       children: [
-        { label: "Menu List", route: "#" },
-        
-      ],
-    },
-    {
-      label: "Warehouse",
-      icon: Warehouse,
-      children: [
+        { label: "Menu", route: "#" },
         { label: "Ingredients Stock", route: "" },
         
       ],
     },
+   
     {
       label: "Master",
       icon: Box,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -10,8 +10,26 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 
 import { useLogin } from "@/hooks/useAuth";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginClient() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get("error");
+
+    if (!error) return;
+    const messages = {
+      session_missing: "Session not found. Please log in again.",
+      session_invalid:
+        "The session is invalid or has been modified. Please log in again.",
+    };
+
+    toast.error(messages[error] || "Session error. Please log in again.");
+    router.replace("/login");
+  }, [router, searchParams]);
+
   const { login, loading } = useLogin();
   const [form, setForm] = useState({
     username: "",

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser, me } from "@/services/auth";
+import { loginUser, logoutUser } from "@/services/auth";
+import { toast } from "sonner";
 
 export function useLogin() {
   const router = useRouter();
@@ -24,4 +25,23 @@ export function useLogin() {
   return { login, loading };
 }
 
+export function useLogout() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
+  const logout = async () => {
+    setLoading(true);
+    try {
+      await logoutUser();
+      toast.success("Logout success! Redirecting...");
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      toast.error(error.message || "Failed to logout, Try Again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { logout, loading };
+}

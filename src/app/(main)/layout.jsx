@@ -21,7 +21,6 @@ export default function MainLayout({ children }) {
     getUser();
   }, []);
 
-  console.log(user);
 
   return (
     <div className="flex w-full gap-2">

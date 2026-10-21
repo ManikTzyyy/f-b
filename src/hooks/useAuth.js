@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/services/auth";
+import { loginUser, me } from "@/services/auth";
 
 export function useLogin() {
   const router = useRouter();
@@ -23,3 +23,5 @@ export function useLogin() {
 
   return { login, loading };
 }
+
+

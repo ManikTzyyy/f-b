@@ -1,14 +1,14 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function Pagination({loading, page, totalPages}) {
+export function Pagination({ loading, page, totalPages, onPageChange }) {
   return (
     <div className="flex items-center justify-start gap-1 pt-4">
       <Button
         variant="outline"
         size="sm"
         disabled={loading || page === 1}
-        onClick={() => setPage((currentPage) => currentPage - 1)}
+        onClick={() => onPageChange((currentPage) => currentPage - 1)}
         aria-label="Previous page">
         <ChevronLeft />
       </Button>
@@ -20,7 +20,7 @@ export function Pagination({loading, page, totalPages}) {
             variant={pageNumber === page ? "default" : "outline"}
             size="sm"
             disabled={loading}
-            onClick={() => setPage(pageNumber)}
+            onClick={() => onPageChange(pageNumber)}
             aria-current={pageNumber === page ? "page" : undefined}>
             {pageNumber}
           </Button>
@@ -31,7 +31,7 @@ export function Pagination({loading, page, totalPages}) {
         variant="outline"
         size="sm"
         disabled={loading || page === totalPages}
-        onClick={() => setPage((currentPage) => currentPage + 1)}
+        onClick={() => onPageChange((currentPage) => currentPage + 1)}
         aria-label="Next page">
         <ChevronRight />
       </Button>

@@ -72,7 +72,7 @@ export function SimpleTable({
                     <Button
                       type="button"
                       className="bg-amber-300 hover:bg-amber-600"
-                      onClick={onEdit}>
+                      onClick={() => onEdit?.(e)}>
                       <Edit />
                     </Button>
                     <AlertDialog>
@@ -99,7 +99,7 @@ export function SimpleTable({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={onDelete}>
+                          <AlertDialogAction onClick={() => onDelete?.(e)}>
                             Yes
                           </AlertDialogAction>
                         </AlertDialogFooter>

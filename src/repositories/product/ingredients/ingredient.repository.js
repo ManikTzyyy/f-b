@@ -10,7 +10,9 @@ export const getIngredientPagination = async ({
   const to = from + limit - 1;
   let query = supabase
     .from("ingredients")
-    .select("*, category:category_id(*)", { count: "exact" });
+    .select("id,name,images,unit,current_stock,category:category_id(*)", {
+      count: "exact",
+    });
   if (search) query = query.or(`name.ilike.%${search}%`);
 
   if (category && category !== "all") {
@@ -21,15 +23,24 @@ export const getIngredientPagination = async ({
     .range(from, to)
     .order("created_at", { ascending: false });
   if (error) throw error;
+
+    const formattedData = data.map((item) => ({
+    ...item,
+    category_name: item.category?.name ?? null,
+  }));
   return {
-    data,
+    data: formattedData,
     totalData: count,
     totalPages: Math.ceil((count || 0) / limit),
   };
 };
 
 export const createData = async (body) => {
-  const { data, error } = await supabase.from("ingredients").insert(body).select("*").single();
+  const { data, error } = await supabase
+    .from("ingredients")
+    .insert(body)
+    .select("*")
+    .single();
   if (error) throw error;
   return data;
 };
@@ -45,7 +56,12 @@ export const getById = async (id) => {
 };
 
 export const updateData = async (id, body) => {
-  const { data, error } = await supabase.from("ingredients").update(body).eq("id", id).select("*").single();
+  const { data, error } = await supabase
+    .from("ingredients")
+    .update(body)
+    .eq("id", id)
+    .select("*")
+    .single();
   if (error) throw error;
   return data;
 };

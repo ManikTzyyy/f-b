@@ -145,8 +145,8 @@ export default function IngredientsPage() {
           </ToggleGroup>
 
           <SimpleTable
-            table={[ "name", "stock", "unit"]}
-            dataMap={[ "name", "current_stock", "unit"]}
+            table={[ "Name", "Stock", "Unit", 'Category']}
+            dataMap={[ "name", "current_stock", "unit", 'category_name']}
             loading={loading}
             data={data}
             onRowClick={(ingredient) =>

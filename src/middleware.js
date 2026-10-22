@@ -38,6 +38,7 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
+    "/",
     "/master/:path*",
     "/purchase/:path*",
     "/sales/:path*",

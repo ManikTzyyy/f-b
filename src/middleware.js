@@ -20,7 +20,6 @@ export async function middleware(req) {
       secret
     );
 
-    console.log(payload)
 
     return NextResponse.next();
   } catch (err) {

@@ -24,7 +24,7 @@ export default function Sidebar() {
       icon: ScrollText,
       children: [
         { label: "Sales Order", route: "#" },
-        { label: "Purchase Order", route: "#" },
+        { label: "Purchase Order", route: "/purchase" },
         { label: "Operational", route: "#" },
         
       ],

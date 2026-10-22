@@ -87,7 +87,7 @@ export function SimpleTable({
                   </TableCell>
                 )}
                 {dataMap.map((key) => (
-                  <TableCell key={key}>{e[key]}</TableCell>
+                  <TableCell key={key}>{key.split(".").reduce((value, part) => value?.[part], e)}</TableCell>
                 ))}
                 {showAction && (
                   <TableCell className="flex items-center justify-center gap-2">
@@ -147,5 +147,4 @@ export function SimpleTable({
     </Table>
   );
 }
-
 

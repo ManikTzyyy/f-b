@@ -76,7 +76,7 @@ export default function AccountPage() {
     <>
       <TableTitle title="Master Data Account" desc="Master Data Account merupakan halaman untuk mengelola akun yang terdaftar seperti cash ataupun Bank" />
       <MyTableHeader limitData={limitOption} buttonLabel="Create account" limitValue={limit} searchValue={search} onCreate={openCreateDialog} onLimitChange={(value) => { setLimit(Number(value)); setPage(1); }} onSearchChange={(event) => { setSearch(event.target.value); setPage(1); }} />
-      <SimpleTable table={["id", "name", "type", "initial balance"]} data={data} dataMap={["id", "name", "type", "initial_balance"]} loading={loading} showAction onEdit={openEditDialog} onDelete={handleDelete} />
+      <SimpleTable table={["name", "type", "initial balance"]} data={data} dataMap={[ "name", "type", "initial_balance"]} loading={loading} showAction onEdit={openEditDialog} onDelete={handleDelete} />
       <Pagination loading={loading} totalPages={totalPages} page={page} onPageChange={setPage} />
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>

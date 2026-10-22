@@ -8,6 +8,19 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  AlertDialogMedia,
+} from "@/components/ui/alert-dialog";
+
+import {
   Table,
   TableBody,
   TableCell,
@@ -34,8 +47,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 
 import { ChevronLeft, ChevronRight, Edit, Trash } from "lucide-react";
 
@@ -86,7 +98,9 @@ export default function UserPage() {
     setSaving(true);
     try {
       const response = await fetch(
-        editingUser ? `/api/master/user?id=${editingUser.id}` : "/api/master/user",
+        editingUser
+          ? `/api/master/user?id=${editingUser.id}`
+          : "/api/master/user",
         {
           method: editingUser ? "PATCH" : "POST",
           headers: { "Content-Type": "application/json" },
@@ -110,9 +124,9 @@ export default function UserPage() {
   };
 
   const handleDelete = async (user) => {
-    if (!window.confirm(`Delete user "${user.username}"?`)) return;
     try {
-      const response = await fetch(`/api/master/user?id=${user.id}`, {
+
+      const response = await fetch(`/api/master/user?id=${user}`, {
         method: "DELETE",
       });
       const responseData = await response.json();
@@ -120,7 +134,9 @@ export default function UserPage() {
         throw new Error(responseData.message || "Failed to delete user");
       }
       toast.success("User deleted");
-      setPage((currentPage) => (data.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage));
+      setPage((currentPage) =>
+        data.length === 1 && currentPage > 1 ? currentPage - 1 : currentPage,
+      );
       setRefreshKey((key) => key + 1);
     } catch (error) {
       toast.error(error.message || "Failed to delete user");
@@ -132,9 +148,11 @@ export default function UserPage() {
       .then((response) => response.json())
       .then((responseData) => {
         if (!responseData.success) throw new Error(responseData.message);
-        setRoles(responseData.roles || []);
+        setRoles(responseData.data || []);
+
       })
       .catch((error) => toast.error(error.message || "Failed to fetch roles"));
+    
   }, []);
 
   useEffect(() => {
@@ -208,8 +226,7 @@ export default function UserPage() {
             onValueChange={(value) => {
               setLimit(Number(value));
               setPage(1);
-            }}
-          >
+            }}>
             <SelectTrigger className="">
               <SelectValue placeholder="Limit" />
             </SelectTrigger>
@@ -227,7 +244,9 @@ export default function UserPage() {
           </Select>
         </div>
 
-        <Button type="button" onClick={openCreateDialog}>Create user</Button>
+        <Button type="button" onClick={openCreateDialog}>
+          Create user
+        </Button>
       </div>
 
       <Table>
@@ -267,17 +286,39 @@ export default function UserPage() {
                     <Button
                       type="button"
                       className="bg-amber-300 hover:bg-amber-600"
-                      onClick={() => openEditDialog(e)}
-                    >
+                      onClick={() => openEditDialog(e)}>
                       <Edit />
                     </Button>
-                    <Button
-                      type="button"
-                      className="bg-red-500 hover:bg-red-700"
-                      onClick={() => handleDelete(e)}
-                    >
-                      <Trash />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger
+                        render={
+                          <Button
+                            type="button"
+                            className="bg-red-500 hover:bg-red-700">
+                            <Trash />
+                          </Button>
+                        }
+                      />
+
+                      <AlertDialogContent size="sm">
+                        <AlertDialogHeader>
+                          <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+                            <Trash />
+                          </AlertDialogMedia>
+                          <AlertDialogTitle>Delete</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this item? This
+                            action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDelete(e.id)}>
+                            Yes
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               );
@@ -292,8 +333,7 @@ export default function UserPage() {
           size="sm"
           disabled={loading || page === 1}
           onClick={() => setPage((currentPage) => currentPage - 1)}
-          aria-label="Previous page"
-        >
+          aria-label="Previous page">
           <ChevronLeft />
         </Button>
 
@@ -305,8 +345,7 @@ export default function UserPage() {
               size="sm"
               disabled={loading}
               onClick={() => setPage(pageNumber)}
-              aria-current={pageNumber === page ? "page" : undefined}
-            >
+              aria-current={pageNumber === page ? "page" : undefined}>
               {pageNumber}
             </Button>
           ),
@@ -317,8 +356,7 @@ export default function UserPage() {
           size="sm"
           disabled={loading || page === totalPages}
           onClick={() => setPage((currentPage) => currentPage + 1)}
-          aria-label="Next page"
-        >
+          aria-label="Next page">
           <ChevronRight />
         </Button>
       </div>
@@ -326,7 +364,9 @@ export default function UserPage() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingUser ? "Edit user" : "Create user"}</DialogTitle>
+            <DialogTitle>
+              {editingUser ? "Edit user" : "Create user"}
+            </DialogTitle>
             <DialogDescription>
               {editingUser ? "Update user data." : "Add a new user account."}
             </DialogDescription>
@@ -336,27 +376,32 @@ export default function UserPage() {
             <Input
               placeholder="Name"
               value={form.name}
-              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              onChange={(event) =>
+                setForm({ ...form, name: event.target.value })
+              }
               required
             />
             <Input
               placeholder="Username"
               value={form.username}
-              onChange={(event) => setForm({ ...form, username: event.target.value })}
+              onChange={(event) =>
+                setForm({ ...form, username: event.target.value })
+              }
               required
             />
             <Input
               type="password"
               placeholder={editingUser ? "New password (optional)" : "Password"}
               value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
+              onChange={(event) =>
+                setForm({ ...form, password: event.target.value })
+              }
               required={!editingUser}
             />
             <Select
               value={form.role_id}
               onValueChange={(value) => setForm({ ...form, role_id: value })}
-              required
-            >
+              required>
               <SelectTrigger>
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>

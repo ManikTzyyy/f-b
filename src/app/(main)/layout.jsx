@@ -3,6 +3,7 @@
 import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import { useEffect, useState } from "react";
+import { Suspense } from "react";
 import { toast } from "sonner";
 
 export default function MainLayout({ children }) {
@@ -25,7 +26,9 @@ export default function MainLayout({ children }) {
 
   return (
     <div className="flex w-full gap-2">
-      <Sidebar />
+      <Suspense fallback={null}>
+        <Sidebar />
+      </Suspense>
       <div className="w-full space-y-2 pr-2">
         <Navbar user={user}/>
         <div className="bg-white rounded-lg p-4 min-h-screen">{children}</div>

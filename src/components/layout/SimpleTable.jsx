@@ -23,6 +23,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
+import Link from "next/link";
 
 export function SimpleTable({
   data,
@@ -31,12 +32,18 @@ export function SimpleTable({
   dataMap = [],
   onEdit,
   onDelete,
+  onRowClick,
   showAction = false,
+  showPic = false,
+  pic_url = "",
 }) {
+  let colLength = showPic ? table.length + 1 : table.length;
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
+          {showPic && <TableHead>Pic</TableHead>}
           {table.map((e) => {
             return <TableHead key={e}>{e}</TableHead>;
           })}
@@ -46,7 +53,7 @@ export function SimpleTable({
       <TableBody>
         {loading ? (
           <TableRow>
-            <TableCell colSpan={4} className="text-center h-32">
+            <TableCell colSpan={colLength} className="text-center h-32">
               <div className="flex justify-center items-center">
                 <Spinner />
               </div>
@@ -54,7 +61,7 @@ export function SimpleTable({
           </TableRow>
         ) : data.length == 0 ? (
           <TableRow>
-            <TableCell colSpan={4} className="text-center h-32">
+            <TableCell colSpan={colLength} className="text-center h-32">
               <div className="flex justify-center items-center text-sm text-stone-400">
                 no data found
               </div>
@@ -63,7 +70,22 @@ export function SimpleTable({
         ) : (
           data.map((e) => {
             return (
-              <TableRow key={e.id} className="text-sm">
+              <TableRow
+                key={e.id}
+                className={`text-sm${onRowClick ? " cursor-pointer hover:bg-muted/50" : ""}`}
+                onClick={() => onRowClick?.(e)}
+              >
+                {showPic && (
+                  <TableCell>
+                    <div className="w-10 h-10 rounded-lg overflow-hidden">
+                      <img
+                        src={e[pic_url]}
+                        alt={e.name || "Ingredient"}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </TableCell>
+                )}
                 {dataMap.map((key) => (
                   <TableCell key={key}>{e[key]}</TableCell>
                 ))}
@@ -72,7 +94,11 @@ export function SimpleTable({
                     <Button
                       type="button"
                       className="bg-amber-300 hover:bg-amber-600"
-                      onClick={() => onEdit?.(e)}>
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        onEdit?.(e);
+                      }}
+                    >
                       <Edit />
                     </Button>
                     <AlertDialog>
@@ -80,7 +106,8 @@ export function SimpleTable({
                         render={
                           <Button
                             type="button"
-                            className="bg-red-500 hover:bg-red-700">
+                            className="bg-red-500 hover:bg-red-700"
+                          >
                             <Trash />
                           </Button>
                         }
@@ -99,7 +126,12 @@ export function SimpleTable({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => onDelete?.(e)}>
+                          <AlertDialogAction
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onDelete?.(e);
+                            }}
+                          >
                             Yes
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -108,6 +140,57 @@ export function SimpleTable({
                   </TableCell>
                 )}
               </TableRow>
+            );
+          })
+        )}
+      </TableBody>
+    </Table>
+  );
+}
+
+export function LinkTable({
+  data = [],
+  head = [],
+  loading,
+  dataMap = [],
+  link,
+}) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          {head.map((e) => {
+            return <TableHead key={e}>{e}</TableHead>;
+          })}
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {loading ? (
+          <TableRow>
+            <TableCell colSpan={head.length} className="text-center h-32">
+              <div className="flex justify-center items-center">
+                <Spinner />
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : data.length == 0 ? (
+          <TableRow>
+            <TableCell colSpan={head.length} className="text-center h-32">
+              <div className="flex justify-center items-center text-sm text-stone-400">
+                no data found
+              </div>
+            </TableCell>
+          </TableRow>
+        ) : (
+          data.map((e) => {
+            return (
+              <Link key={e.id} href={`${link}/${e.id}`}>
+                <TableRow key={e.id} className="text-sm">
+                  {dataMap.map((key) => (
+                    <TableCell key={key}>{e[key]}</TableCell>
+                  ))}
+                </TableRow>
+              </Link>
             );
           })
         )}

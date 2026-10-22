@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import TableTitle from "@/components/layout/TableTitle";
 import { MyTableHeader } from "@/components/layout/MyTableHeader";
 import { Pagination } from "@/components/ui/pagination";
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function CategoryPage() {
+  const router = useRouter();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(30);
@@ -127,10 +129,10 @@ export default function CategoryPage() {
       <TableTitle title="Master Data Kategori" desc="Master data Kategori merupakan halaman untuk mengelola kategori bahan yang terdaftar" />
       <MyTableHeader
         limitData={limitOption}
-        buttonLabel="Create category"
+        buttonLabel="Create ingredient"
         limitValue={limit}
         searchValue={search}
-        onCreate={openCreateDialog}
+        onCreate={() => router.push("/product/ingredient/create")}
         onLimitChange={(value) => { setLimit(Number(value)); setPage(1); }}
         onSearchChange={(event) => { setSearch(event.target.value); setPage(1); }}
       />

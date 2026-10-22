@@ -34,7 +34,7 @@ export default function Sidebar() {
       icon: Utensils,
       children: [
         { label: "Menu", route: "#" },
-        { label: "Ingredients Stock", route: "" },
+        { label: "Ingredients Stock", route: "/product/ingredient" },
         
       ],
     },

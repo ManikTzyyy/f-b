@@ -23,7 +23,6 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
-import Link from "next/link";
 
 export function SimpleTable({
   data,
@@ -37,8 +36,9 @@ export function SimpleTable({
   showPic = false,
   pic_url = "",
 }) {
-  let colLength = showPic ? table.length + 1 : table.length;
-
+  let a = showPic ? table.length + 1 : table.length || 0;
+  let b = showAction ? table.length + 1 : table.length || 0;
+  const colLength = a + b;
   return (
     <Table>
       <TableHeader>
@@ -73,8 +73,7 @@ export function SimpleTable({
               <TableRow
                 key={e.id}
                 className={`text-sm${onRowClick ? " cursor-pointer hover:bg-muted/50" : ""}`}
-                onClick={() => onRowClick?.(e)}
-              >
+                onClick={() => onRowClick?.(e)}>
                 {showPic && (
                   <TableCell>
                     <div className="w-10 h-10 rounded-lg overflow-hidden">
@@ -87,7 +86,9 @@ export function SimpleTable({
                   </TableCell>
                 )}
                 {dataMap.map((key) => (
-                  <TableCell key={key}>{key.split(".").reduce((value, part) => value?.[part], e)}</TableCell>
+                  <TableCell key={key}>
+                    {key.split(".").reduce((value, part) => value?.[part], e)}
+                  </TableCell>
                 ))}
                 {showAction && (
                   <TableCell className="flex items-center justify-center gap-2">
@@ -97,8 +98,7 @@ export function SimpleTable({
                       onClick={(event) => {
                         event.stopPropagation();
                         onEdit?.(e);
-                      }}
-                    >
+                      }}>
                       <Edit />
                     </Button>
                     <AlertDialog>
@@ -106,8 +106,7 @@ export function SimpleTable({
                         render={
                           <Button
                             type="button"
-                            className="bg-red-500 hover:bg-red-700"
-                          >
+                            className="bg-red-500 hover:bg-red-700">
                             <Trash />
                           </Button>
                         }
@@ -130,8 +129,7 @@ export function SimpleTable({
                             onClick={(event) => {
                               event.stopPropagation();
                               onDelete?.(e);
-                            }}
-                          >
+                            }}>
                             Yes
                           </AlertDialogAction>
                         </AlertDialogFooter>
@@ -147,4 +145,3 @@ export function SimpleTable({
     </Table>
   );
 }
-

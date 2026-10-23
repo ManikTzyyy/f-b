@@ -144,7 +144,7 @@ export default function PurchaseDetailPage({ id }) {
         throw new Error(responseData.message || "Failed to confirm purchase");
       setPurchase(responseData.data);
       toast.success("Purchase confirmed");
-      router.refresh()
+      router.refresh();
     } catch (error) {
       toast.error(error.message || "Failed to confirm purchase");
     } finally {
@@ -208,7 +208,7 @@ export default function PurchaseDetailPage({ id }) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Account</p>
-              <p className="text-lg">{purchase.account?.name || ''}</p>
+              <p className="text-lg">{purchase.account?.name || ""}</p>
             </div>
           </div>
         </div>
@@ -273,7 +273,7 @@ export default function PurchaseDetailPage({ id }) {
                 Unit cost
               </label>
               <Input
-              placeholder='0'
+                placeholder="0"
                 type="number"
                 min="0"
                 value={form.unit_cost}
@@ -283,8 +283,12 @@ export default function PurchaseDetailPage({ id }) {
                 required
               />
             </div>
-            <Button type="submit" variant="outline" disabled={saving || !selectedIngredient}>
-              {saving ? <Spinner /> : <SquarePlus/>}
+            <Button
+              type="submit"
+              variant="outline"
+              disabled={saving || !selectedIngredient}
+            >
+              {saving ? <Spinner /> : <SquarePlus />}
             </Button>
           </form>
         )}

@@ -73,9 +73,10 @@ export function SimpleTable({
               <TableRow
                 key={e.id}
                 className={`text-sm${onRowClick ? " cursor-pointer hover:bg-muted/50" : ""}`}
-                onClick={() => onRowClick?.(e)}>
+                onClick={() => onRowClick?.(e)}
+              >
                 {showPic && (
-                  <TableCell>
+                  <TableCell className={e.available !== undefined && !e.available ? "bg-red-100/50" : ""}>
                     <div className="w-10 h-10 rounded-lg overflow-hidden">
                       <img
                         src={e[pic_url]}
@@ -86,8 +87,23 @@ export function SimpleTable({
                   </TableCell>
                 )}
                 {dataMap.map((key) => (
-                  <TableCell key={key}>
-                    {key.split(".").reduce((value, part) => value?.[part], e)}
+                  <TableCell
+                    key={key}
+                    className={e.available !== undefined && !e.available ? "bg-red-100/50" : ""}
+                  >
+                    {key === "available" && typeof e.available === "boolean" ? (
+                      <span
+                        className={
+                          e.available
+                            ? "font-medium text-green-600"
+                            : "font-medium text-red-600"
+                        }
+                      >
+                        {e.available ? "Available" : "Not available"}
+                      </span>
+                    ) : (
+                      key.split(".").reduce((value, part) => value?.[part], e)
+                    )}
                   </TableCell>
                 ))}
                 {showAction && (
@@ -98,7 +114,8 @@ export function SimpleTable({
                       onClick={(event) => {
                         event.stopPropagation();
                         onEdit?.(e);
-                      }}>
+                      }}
+                    >
                       <Edit />
                     </Button>
                     <AlertDialog>
@@ -106,7 +123,8 @@ export function SimpleTable({
                         render={
                           <Button
                             type="button"
-                            className="bg-red-500 hover:bg-red-700">
+                            className="bg-red-500 hover:bg-red-700"
+                          >
                             <Trash />
                           </Button>
                         }
@@ -129,7 +147,8 @@ export function SimpleTable({
                             onClick={(event) => {
                               event.stopPropagation();
                               onDelete?.(e);
-                            }}>
+                            }}
+                          >
                             Yes
                           </AlertDialogAction>
                         </AlertDialogFooter>

@@ -9,8 +9,8 @@ export const getMenuPagination = async ({
   const from = (page - 1) * limit;
   const to = from + limit - 1;
   let query = supabase
-    .from("menus")
-    .select("id, name, description, price, category:menu_category_id(*), images", { count: "exact" });
+    .from("menu_with_availability")
+    .select("id, name, description, price, category:menu_category_id(*), images, available", { count: "exact" });
   if (search) query = query.ilike("name", `%${search}%`);
   if (category && category !== "all") {
     query = query.eq("menu_category_id", category);
@@ -32,9 +32,9 @@ export const getMenuPagination = async ({
 
 export const getById = async (id) => {
   const { data, error } = await supabase
-    .from("menus")
+    .from("menu_with_availability")
     .select(
-      "id, name, description, price, images, menu_category:menu_category_id(*)",
+      "*, menu_category:menu_category_id(*)",
     )
     .eq("id", id)
     .single();

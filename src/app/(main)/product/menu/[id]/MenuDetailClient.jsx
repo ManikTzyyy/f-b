@@ -179,7 +179,7 @@ export default function MenuDetailPage({ id }) {
     menu.price == null ? "-" : Number(menu.price).toLocaleString("id-ID");
 
   return (
-    <>
+    <div>
       <div className="flex justify-between">
         <Button type="button" variant="outline" onClick={() => router.back()}>
           Back
@@ -223,7 +223,9 @@ export default function MenuDetailPage({ id }) {
         </div>
       </div>
       {/* content */}
-      <div className="flex gap-10 flex-wrap">
+      <div
+        className={`flex gap-10 flex-wrap p-4 my-2 rounded-lg ${!menu.available && "bg-red-50" }`}
+      >
         <div className="w-80 h-80 overflow-hidden rounded-lg">
           <img
             className="object-cover w-full h-full"
@@ -237,14 +239,20 @@ export default function MenuDetailPage({ id }) {
           <div className="max-w-96">
             <LabelInfo label={"Description"} value={menu.description} />
           </div>
-            <LabelInfo label={"Category"} value={menu.menu_category?.name} />
+          <LabelInfo label={"Category"} value={menu.menu_category?.name} />
+          <LabelInfo
+            label={"Status"}
+            value={menu.available ? "availabel" : "not available"}
+          />
         </div>
       </div>
 
       {/* footer */}
 
-      <div className="mt-12 border-t border-stone-300">
-        <h2 className="mb-3 text-lg font-semibold text-stone-800">Menu Recipes</h2>
+      <div className="mt-12 border-t border-stone-300 p-4">
+        <h2 className="mb-3 text-lg font-semibold text-stone-800">
+          Menu Recipes
+        </h2>
         <form
           onSubmit={addRecipe}
           className="mb-4 flex flex-wrap items-center gap-2"
@@ -321,6 +329,7 @@ export default function MenuDetailPage({ id }) {
           </div>
           <div className="self-end">
             <Button
+            variant="outline"
               type="submit"
               disabled={savingRecipe || !recipeForm.ingredient_id}
             >
@@ -373,6 +382,6 @@ export default function MenuDetailPage({ id }) {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

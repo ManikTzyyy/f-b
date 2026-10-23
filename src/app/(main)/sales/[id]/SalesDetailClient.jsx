@@ -92,6 +92,10 @@ export default function SalesDetailClient({ id }) {
 
   const addItem = async (event) => {
     event.preventDefault();
+    if (!selectedMenu?.available) {
+      toast.error("Menu is not available");
+      return;
+    }
     setSaving(true);
     try {
       const response = await fetch("/api/sales/item", {
@@ -239,8 +243,14 @@ export default function SalesDetailClient({ id }) {
                     <button
                       type="button"
                       key={menu.id}
-                      className="flex w-full items-center justify-between gap-2 p-2 text-left text-sm hover:bg-muted"
+                      disabled={!menu.available}
+                      className={`flex w-full items-center justify-between gap-2 p-2 text-left text-sm ${
+                        menu.available
+                          ? "hover:bg-muted"
+                          : "cursor-not-allowed opacity-60"
+                      }`}
                       onClick={() => {
+                        if (!menu.available) return;
                         setSelectedMenu(menu);
                         setMenuSearch(menu.name);
                         setShowResults(false);
@@ -257,6 +267,11 @@ export default function SalesDetailClient({ id }) {
                         <div>
                           <span className="text-orange-500 block">{menu.name}</span>
                           <span className="text-xs">{menu.category?.name}</span>
+                          {!menu.available && (
+                            <span className="block text-xs text-red-600">
+                              Not available
+                            </span>
+                          )}
                         </div>
                       </div>
                       <span className="text-muted-foreground">
@@ -331,7 +346,7 @@ export default function SalesDetailClient({ id }) {
             items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 border-b p-3 last:border-b-0"
+                className={`flex items-center justify-between gap-3 border-b p-3 last:border-b-0 ${item.menu?.available? "" : "bg-red-50 "}`}
               >
                 <div className="flex gap-5">
                   <div className="h-20 w-20 rounded-lg overflow-hidden">
@@ -342,7 +357,7 @@ export default function SalesDetailClient({ id }) {
                     />
                   </div>
                   <div>
-                    <p className="font-medium text-orange-500">{item.menu?.name || "-"}</p>
+                    <p className={`font-medium ${!item.menu?.available? "text-red-700" : "text-orange-500"}  ` }>{item.menu?.name || "-"} {!item.menu?.available &&(<span>| Not Available</span>)}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.qty} x Rp{" "}
                       {Number(item.unit_price || 0).toLocaleString("id-ID")}

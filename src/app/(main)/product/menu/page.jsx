@@ -98,8 +98,8 @@ export default function MenuPage() {
     return () => {
       active = false;
     };
-  }, [page, limit, debouncedSearch, categoryFilter]);
 
+  }, [page, limit, debouncedSearch, categoryFilter]);
   return (
     <>
       {loadingCategory ? (
@@ -145,7 +145,7 @@ export default function MenuPage() {
           </ToggleGroup>
           <SimpleTable
             table={["name", "price", 'category', 'status']}
-            dataMap={["name", "price", 'category_name', '-']}
+            dataMap={["name", "price", 'category_name', 'available']}
             data={data}
             loading={loading}
             showPic

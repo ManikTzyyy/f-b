@@ -42,7 +42,7 @@ export const getSalesOrderItems = async (soId) => {
   const { data, error } = await supabase
     .from("sales_order_items")
     .select(
-      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_id(id, name, price, images, category:menu_category_id(*))",
+      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_with_availability!menu_id(*, category:menu_category_id(*))",
     )
     .eq("so_id", soId)
     .order("created_at", { ascending: true });
@@ -73,7 +73,7 @@ export const createSalesOrder = async ({ soDate, table, accountId }) => {
       account_id: accountId,
       total_amount: 0,
       status: "draft",
-      progress: "waiting",
+      progress: "pending",
     })
     .select("*")
     .single();
@@ -83,11 +83,12 @@ export const createSalesOrder = async ({ soDate, table, accountId }) => {
 
 export const createSalesOrderItem = async ({ soId, menuId, qty, note }) => {
   const { data: menu, error: menuError } = await supabase
-    .from("menus")
-    .select("id, price")
+    .from("menu_with_availability")
+    .select("id, price, available")
     .eq("id", menuId)
     .single();
   if (menuError) throw menuError;
+  if (!menu.available) throw new Error("Menu is not available");
   const unitPrice = Number(menu.price);
   if (!Number.isSafeInteger(unitPrice) || unitPrice < 0)
     throw new Error("Selected menu has an invalid price");

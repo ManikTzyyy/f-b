@@ -23,7 +23,7 @@ export default function Sidebar() {
       label: "Income & Expense",
       icon: ScrollText,
       children: [
-        { label: "Sales Order", route: "#" },
+        { label: "Sales Order", route: "/sales" },
         { label: "Purchase Order", route: "/purchase" },
         { label: "Operational", route: "#" },
         
@@ -45,7 +45,8 @@ export default function Sidebar() {
       children: [
         { label: "Account", route: "/master/account" },
         { label: "Supplier", route: "/master/supplier" },
-        { label: "Categories", route: "/master/category" },
+        { label: "Ingredient Categories", route: "/master/category" },
+        { label: "Menu Categories", route: "/master/menu-category" },
         { label: "Roles", route: "/master/role" },
         { label: "Users", route: "/master/user" },
         

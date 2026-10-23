@@ -129,10 +129,10 @@ export default function CategoryPage() {
       <TableTitle title="Master Data Kategori" desc="Master data Kategori merupakan halaman untuk mengelola kategori bahan yang terdaftar" />
       <MyTableHeader
         limitData={limitOption}
-        buttonLabel="Create ingredient"
+        buttonLabel="Create category"
         limitValue={limit}
         searchValue={search}
-        onCreate={() => router.push("/product/ingredient/create")}
+        onCreate={openCreateDialog}
         onLimitChange={(value) => { setLimit(Number(value)); setPage(1); }}
         onSearchChange={(event) => { setSearch(event.target.value); setPage(1); }}
       />

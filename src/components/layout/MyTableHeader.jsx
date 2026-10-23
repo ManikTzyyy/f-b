@@ -18,6 +18,7 @@ export function MyTableHeader({
   limitValue,
   onLimitChange,
   buttonLabel,
+  showButton = true,
 }) {
   return (
     <div className="flex justify-between items-end pt-4 pb-2">
@@ -47,10 +48,11 @@ export function MyTableHeader({
           </SelectContent>
         </Select>
       </div>
-
-      <Button type="button" onClick={onCreate}>
-        {buttonLabel}
-      </Button>
+      {showButton && (
+        <Button type="button" onClick={onCreate}>
+          {buttonLabel}
+        </Button>
+      )}
     </div>
   );
 }

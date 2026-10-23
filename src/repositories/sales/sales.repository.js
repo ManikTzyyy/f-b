@@ -107,7 +107,7 @@ export const createSalesOrderItem = async ({ soId, menuId, qty, note }) => {
       note: note?.trim() || null,
     })
     .select(
-      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_id(id, name, price, images, category:menu_category_id(*))",
+      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_with_availability!menu_id(*, category:menu_category_id(*))",
     )
     .single();
   if (error) throw error;

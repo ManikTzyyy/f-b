@@ -14,15 +14,20 @@ export async function GET(req) {
   const { searchParams } = new URL(req.url);
   try {
     const id = searchParams.get("id");
-    if (id) return NextResponse.json({ success: true, data: await getById(id) });
+    if (id)
+      return NextResponse.json({ success: true, data: await getById(id) });
     const result = await getMenuPagination({
       page: Number(searchParams.get("page")) || 1,
       limit: Number(searchParams.get("limit")) || 30,
       search: searchParams.get("search") || "",
+      category: searchParams.get("category") || "",
     });
     return NextResponse.json({ success: true, ...result });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 500 },
+    );
   }
 }
 
@@ -34,6 +39,7 @@ async function getBody(req) {
     description: body.description || null,
     price: body.price === "" || body.price == null ? null : Number(body.price),
     images: body.images || null,
+    menu_category_id : body.menu_category_id || null
   };
 }
 
@@ -41,9 +47,15 @@ export async function POST(req) {
   try {
     const { error: authError } = requireApiSession(req);
     if (authError) return authError;
-    return NextResponse.json({ success: true, data: await createData(await getBody(req)) }, { status: 201 });
+    return NextResponse.json(
+      { success: true, data: await createData(await getBody(req)) },
+      { status: 201 },
+    );
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 400 },
+    );
   }
 }
 
@@ -53,9 +65,15 @@ export async function PATCH(req) {
     if (authError) return authError;
     const id = new URL(req.url).searchParams.get("id");
     if (!id) throw new Error("Id is required");
-    return NextResponse.json({ success: true, data: await updateData(id, await getBody(req)) });
+    return NextResponse.json({
+      success: true,
+      data: await updateData(id, await getBody(req)),
+    });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 400 },
+    );
   }
 }
 
@@ -68,6 +86,9 @@ export async function DELETE(req) {
     await deleteData(id);
     return NextResponse.json({ success: true });
   } catch (error) {
-    return NextResponse.json({ success: false, message: error.message }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: error.message },
+      { status: 400 },
+    );
   }
 }

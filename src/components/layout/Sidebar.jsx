@@ -23,7 +23,7 @@ export default function Sidebar() {
       label: "Income & Expense",
       icon: ScrollText,
       children: [
-        { label: "Sales Order", route: "#" },
+        { label: "Sales Order", route: "/sales" },
         { label: "Purchase Order", route: "/purchase" },
         { label: "Operational", route: "#" },
         

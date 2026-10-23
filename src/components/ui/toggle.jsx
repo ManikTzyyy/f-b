@@ -11,6 +11,16 @@ const toggleVariants = cva(
       variant: {
         default: "bg-transparent",
         outline: "border border-input bg-transparent hover:bg-muted",
+        blue:
+          "bg-blue-200/50 text-blue-600 font-semibold aria-pressed:bg-stone-100 aria-pressed:text-stone-200 data-[state=on]:bg-stone-100 data-[state=on]:text-stone-200",
+        green:
+          "bg-green-200/50 text-green-600 font-semibold aria-pressed:bg-stone-100 aria-pressed:text-stone-200 data-[state=on]:bg-stone-100 data-[state=on]:text-stone-200",
+        yellow:
+          "bg-yellow-200/50 text-yellow-600 font-semibold aria-pressed:bg-stone-100 aria-pressed:text-stone-200 data-[state=on]:bg-stone-100 data-[state=on]:text-stone-200",
+        red:
+          "bg-red-200/50 text-red-600 font-semibold aria-pressed:bg-stone-100 aria-pressed:text-stone-200 data-[state=on]:bg-stone-100 data-[state=on]:text-stone-200",
+        purple:
+          "bg-purple-200/50 text-purple-600 font-semibold aria-pressed:bg-stone-100 aria-pressed:text-stone-200 data-[state=on]:bg-stone-100 data-[state=on]:text-stone-200",
       },
       size: {
         default:

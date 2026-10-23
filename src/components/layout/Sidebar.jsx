@@ -5,7 +5,8 @@ import {
   ArrowLeftFromLineIcon,
   ArrowRightFromLineIcon,
   ScrollText,
-  Utensils
+  Utensils,
+  ChefHat
 } from "lucide-react";
 
 import Link from "next/link";
@@ -26,6 +27,14 @@ export default function Sidebar() {
         { label: "Sales Order", route: "/sales" },
         { label: "Purchase Order", route: "/purchase" },
         { label: "Operational", route: "#" },
+        
+      ],
+    },
+    {
+      label: "Live Kitchen Display",
+      icon: ChefHat,
+      children: [
+        { label: "Order Status", route: "/kds" },
         
       ],
     },

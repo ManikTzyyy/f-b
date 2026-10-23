@@ -10,7 +10,7 @@ export const getMenuPagination = async ({
   const to = from + limit - 1;
   let query = supabase
     .from("menus")
-    .select("id, name, description, price, images", { count: "exact" });
+    .select("id, name, description, price, category:menu_category_id(*), images", { count: "exact" });
   if (search) query = query.ilike("name", `%${search}%`);
   if (category && category !== "all") {
     query = query.eq("menu_category_id", category);
@@ -19,8 +19,12 @@ export const getMenuPagination = async ({
     .range(from, to)
     .order("created_at", { ascending: false });
   if (error) throw error;
+  const formattedData = data.map((item) => ({
+    ...item,
+    category_name: item.category?.name ?? null,
+  }));
   return {
-    data,
+    data : formattedData,
     totalData: count,
     totalPages: Math.ceil((count || 0) / limit),
   };

@@ -42,7 +42,7 @@ export const getSalesOrderItems = async (soId) => {
   const { data, error } = await supabase
     .from("sales_order_items")
     .select(
-      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_id(id, name, price, images)",
+      "id, so_id, menu_id, qty, unit_price, sub_total, note, menu:menu_id(id, name, price, images, category:menu_category_id(*))",
     )
     .eq("so_id", soId)
     .order("created_at", { ascending: true });
@@ -81,12 +81,7 @@ export const createSalesOrder = async ({ soDate, table, accountId }) => {
   return data;
 };
 
-export const createSalesOrderItem = async ({
-  soId,
-  menuId,
-  qty,
-  note,
-}) => {
+export const createSalesOrderItem = async ({ soId, menuId, qty, note }) => {
   const { data: menu, error: menuError } = await supabase
     .from("menus")
     .select("id, price")
@@ -164,13 +159,15 @@ export const confirmSalesOrder = async (id) => {
     .eq("status", "draft")
     .select("id, account_id")
     .single();
-  if (claimError) throw new Error("Sales order is already being processed or confirmed");
+  if (claimError)
+    throw new Error("Sales order is already being processed or confirmed");
 
   const updatedStocks = [];
   let originalBalance;
   let transactionId;
   try {
-    if (!claimedOrder.account_id) throw new Error("Sales order account is required");
+    if (!claimedOrder.account_id)
+      throw new Error("Sales order account is required");
     const items = await getSalesOrderItems(id);
     if (!items.length) throw new Error("Add at least one sales order item");
     const total = items.reduce(

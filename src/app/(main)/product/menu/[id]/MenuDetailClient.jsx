@@ -237,6 +237,7 @@ export default function MenuDetailPage({ id }) {
           <div className="max-w-96">
             <LabelInfo label={"Description"} value={menu.description} />
           </div>
+            <LabelInfo label={"Category"} value={menu.menu_category?.name} />
         </div>
       </div>
 

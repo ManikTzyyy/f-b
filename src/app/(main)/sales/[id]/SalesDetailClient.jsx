@@ -218,7 +218,8 @@ export default function SalesDetailClient({ id }) {
         {!locked && (
           <form
             onSubmit={addItem}
-            className="flex flex-wrap items-end gap-2 rounded-lg border p-4">
+            className="flex flex-wrap items-end gap-2 rounded-lg border p-4"
+          >
             <div className="relative min-w-64">
               <label className="mb-1 block text-sm font-medium">Menu</label>
               <Input
@@ -243,7 +244,8 @@ export default function SalesDetailClient({ id }) {
                         setSelectedMenu(menu);
                         setMenuSearch(menu.name);
                         setShowResults(false);
-                      }}>
+                      }}
+                    >
                       <div className="flex gap-2">
                         <div className="h-10 w-10 rounded-lg overflow-hidden">
                           <img
@@ -252,7 +254,10 @@ export default function SalesDetailClient({ id }) {
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <span>{menu.name}</span>
+                        <div>
+                          <span className="text-orange-500 block">{menu.name}</span>
+                          <span className="text-xs">{menu.category?.name}</span>
+                        </div>
                       </div>
                       <span className="text-muted-foreground">
                         Rp {Number(menu.price || 0).toLocaleString("id-ID")}
@@ -310,7 +315,8 @@ export default function SalesDetailClient({ id }) {
             <Button
               type="submit"
               variant="outline"
-              disabled={saving || !selectedMenu}>
+              disabled={saving || !selectedMenu}
+            >
               {saving ? <Spinner /> : <SquarePlus />}
             </Button>
           </form>
@@ -325,7 +331,8 @@ export default function SalesDetailClient({ id }) {
             items.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between gap-3 border-b p-3 last:border-b-0">
+                className="flex items-center justify-between gap-3 border-b p-3 last:border-b-0"
+              >
                 <div className="flex gap-5">
                   <div className="h-20 w-20 rounded-lg overflow-hidden">
                     <img
@@ -335,11 +342,14 @@ export default function SalesDetailClient({ id }) {
                     />
                   </div>
                   <div>
-                    <p className="font-medium">{item.menu?.name || "-"}</p>
+                    <p className="font-medium text-orange-500">{item.menu?.name || "-"}</p>
                     <p className="text-sm text-muted-foreground">
                       {item.qty} x Rp{" "}
                       {Number(item.unit_price || 0).toLocaleString("id-ID")}
                       {item.note ? ` · ${item.note}` : ""}
+                    </p>
+                    <p className="my-2 border border-stone-400 text-xs w-fit px-2 py-0.5 rounded-full">
+                      {item.menu?.category?.name || "-"}
                     </p>
                   </div>
                 </div>
@@ -350,7 +360,8 @@ export default function SalesDetailClient({ id }) {
                       type="button"
                       size="sm"
                       variant="outline"
-                      onClick={() => removeItem(item)}>
+                      onClick={() => removeItem(item)}
+                    >
                       <SquareMinus />
                     </Button>
                   )}

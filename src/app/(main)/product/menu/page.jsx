@@ -144,8 +144,8 @@ export default function MenuPage() {
             ))}
           </ToggleGroup>
           <SimpleTable
-            table={["name", "price"]}
-            dataMap={["name", "price"]}
+            table={["name", "price", 'category', 'status']}
+            dataMap={["name", "price", 'category_name', '-']}
             data={data}
             loading={loading}
             showPic

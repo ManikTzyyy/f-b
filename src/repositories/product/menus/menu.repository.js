@@ -13,7 +13,7 @@ export const getMenuPagination = async ({ page = 1, limit = 30, search = "" }) =
 export const getById = async (id) => {
   const { data, error } = await supabase
     .from("menus")
-    .select("id, name, description, price, images")
+    .select("id, name, description, price, images, menu_category:menu_category_id(*)")
     .eq("id", id)
     .single();
   if (error) throw error;

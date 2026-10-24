@@ -8,8 +8,20 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MyTableHeader } from "@/components/layout/MyTableHeader";
 import { Minus, Plus, CalendarArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function PublicMenu() {
+  const router = useRouter();
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(30);
@@ -18,8 +30,16 @@ export default function PublicMenu() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState("all");
-  const [loadingCategory, setLoadingCategory] = useState(false);
   const [category, setCategory] = useState([]);
+  const [menuById, setMenuById] = useState({});
+  const [orderOpen, setOrderOpen] = useState(false);
+  const [ordering, setOrdering] = useState(false);
+  const [notes, setNotes] = useState({});
+  const [table, setTable] = useState("");
+
+  useEffect(() => {
+    setTable(new URLSearchParams(window.location.search).get("id") || "");
+  }, []);
 
   const [quantities, setQuantities] = useState({});
   const updateQuantity = (productId, amount) => {
@@ -27,7 +47,6 @@ export default function PublicMenu() {
       ...prev,
       [productId]: Math.max(0, (prev[productId] || 0) + amount),
     }));
-    console.log(quantities);
   };
 
   useEffect(() => {
@@ -41,9 +60,8 @@ export default function PublicMenu() {
   useEffect(() => {
     let active = true;
     const loadCategory = async () => {
-      setLoadingCategory(true);
       try {
-        const res = await fetch(`/api/master/menu-category`);
+        const res = await fetch(`/api/public/menu-category`);
         const responseData = await res.json();
         if (!res.ok || !responseData.success) {
           throw new Error(responseData.message || "Failed to fetch categories");
@@ -56,8 +74,6 @@ export default function PublicMenu() {
           toast.error("Failed to fetch category", {
             description: error.message,
           });
-      } finally {
-        if (active) setLoadingCategory(false);
       }
     };
     loadCategory();
@@ -84,6 +100,12 @@ export default function PublicMenu() {
         }
         if (active) {
           setData(responseData.data);
+          setMenuById((current) => ({
+            ...current,
+            ...Object.fromEntries(
+              (responseData.data || []).map((item) => [item.id, item]),
+            ),
+          }));
           setTotalPages(responseData.totalPages || 1);
         }
       } catch (error) {
@@ -97,10 +119,54 @@ export default function PublicMenu() {
       active = false;
     };
   }, [page, limit, debouncedSearch, categoryFilter]);
+
+  const selectedItems = Object.entries(quantities)
+    .filter(([id, quantity]) => quantity > 0 && menuById[id])
+    .map(([id, quantity]) => ({
+      ...menuById[id],
+      qty: quantity,
+      note: notes[id] || "",
+    }));
+  const orderTotal = selectedItems.reduce(
+    (total, item) => total + Number(item.price) * item.qty,
+    0,
+  );
+
+  const submitOrder = async () => {
+    setOrdering(true);
+    try {
+      const response = await fetch("/api/public/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          table,
+          items: selectedItems.map((item) => ({
+            menu_id: item.id,
+            qty: item.qty,
+            note: item.note,
+          })),
+        }),
+      });
+      const responseData = await response.json();
+      if (!response.ok || !responseData.success)
+        throw new Error(responseData.message || "Failed to submit order");
+      router.push(`/public/order/${encodeURIComponent(responseData.data.so_no)}`);
+    } catch (error) {
+      toast.error(error.message || "Failed to submit order");
+    } finally {
+      setOrdering(false);
+    }
+  };
+
   return (
     <div className="bg-white min-h-screen w-full p-4 relative">
       <div className="fixed bottom-0 z-50 left-1/2 mb-5">
-        <Button size="lg"><CalendarArrowDown /> Order Now!</Button>
+        <Button
+          size="lg"
+          disabled={!selectedItems.length}
+          onClick={() => setOrderOpen(true)}>
+          <CalendarArrowDown /> Order Now ({selectedItems.length})
+        </Button>
       </div>
 
       <TableTitle title={"Our Menu"} desc={"choose your favorite!"} />
@@ -206,6 +272,50 @@ export default function PublicMenu() {
         page={page}
         onPageChange={setPage}
       />
+
+      <Dialog open={orderOpen} onOpenChange={setOrderOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              Confirm Order - {table ? `${table}` : ""}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[55vh] space-y-4 overflow-y-auto">
+            {selectedItems.map((item) => (
+              <div key={item.id} className="space-y-2 border-b pb-3">
+                <div className="flex justify-between gap-3 font-medium">
+                  <span>{item.name} x {item.qty}</span>
+                  <span>
+                    Rp {(Number(item.price) * item.qty).toLocaleString("id-ID")}
+                  </span>
+                </div>
+                <Input
+                  placeholder="Note for this item (optional)"
+                  maxLength={500}
+                  value={notes[item.id] || ""}
+                  onChange={(event) =>
+                    setNotes((current) => ({
+                      ...current,
+                      [item.id]: event.target.value,
+                    }))
+                  }
+                />
+              </div>
+            ))}
+          </div>
+          <div className="text-right text-base font-bold">
+            Total: Rp {orderTotal.toLocaleString("id-ID")}
+          </div>
+          <DialogFooter>
+            <DialogClose render={<Button type="button" variant="outline" />}>
+              Cancel
+            </DialogClose>
+            <Button disabled={ordering} onClick={submitOrder}>
+              {ordering ? <Spinner /> : "Confirm Order"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

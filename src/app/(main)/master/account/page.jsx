@@ -9,6 +9,13 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
+const formatCurrency = (value) =>
+  value === null || value === undefined || value === ""
+    ? ""
+    : `Rp ${Number(value).toLocaleString("id-ID")}`;
+
+const parseCurrency = (value) => value.replace(/\D/g, "");
+
 export default function AccountPage() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
@@ -37,7 +44,15 @@ export default function AccountPage() {
         const res = await fetch(`/api/master/account?page=${page}&limit=${limit}&search=${encodeURIComponent(debouncedSearch)}`);
         const responseData = await res.json();
         if (!res.ok || !responseData.success) throw new Error(responseData.message || "Failed to fetch accounts");
-        if (active) { setData(responseData.data || []); setTotalPages(responseData.totalPages || 1); }
+        if (active) {
+          setData(
+            (responseData.data || []).map((account) => ({
+              ...account,
+              initial_balance_display: formatCurrency(account.initial_balance),
+            })),
+          );
+          setTotalPages(responseData.totalPages || 1);
+        }
       } catch (error) {
         if (active) toast.error("Failed to fetch data", { description: error.message });
       } finally { if (active) setLoading(false); }
@@ -76,7 +91,7 @@ export default function AccountPage() {
     <>
       <TableTitle title="Master Data Account" desc="Master Data Account merupakan halaman untuk mengelola akun yang terdaftar seperti cash ataupun Bank" />
       <MyTableHeader limitData={limitOption} buttonLabel="Create account" limitValue={limit} searchValue={search} onCreate={openCreateDialog} onLimitChange={(value) => { setLimit(Number(value)); setPage(1); }} onSearchChange={(event) => { setSearch(event.target.value); setPage(1); }} />
-      <SimpleTable table={["name", "type", "initial balance"]} data={data} dataMap={[ "name", "type", "initial_balance"]} loading={loading} showAction onEdit={openEditDialog} onDelete={handleDelete} />
+      <SimpleTable table={["name", "type", "initial balance"]} data={data} dataMap={[ "name", "type", "initial_balance_display"]} loading={loading} showAction onEdit={openEditDialog} onDelete={handleDelete} />
       <Pagination loading={loading} totalPages={totalPages} page={page} onPageChange={setPage} />
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
@@ -84,7 +99,18 @@ export default function AccountPage() {
           <form onSubmit={handleSubmit} className="space-y-3">
             <Input placeholder="Name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
             <Input placeholder="Type" value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value })} />
-            <Input type="number" placeholder="Initial balance" value={form.initial_balance} onChange={(event) => setForm({ ...form, initial_balance: event.target.value })} />
+            <Input
+              type="text"
+              inputMode="numeric"
+              placeholder="Initial balance"
+              value={formatCurrency(form.initial_balance)}
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  initial_balance: parseCurrency(event.target.value),
+                })
+              }
+            />
             <DialogFooter><DialogClose render={<Button type="button" variant="outline" />}>Cancel</DialogClose><Button type="submit" disabled={saving || !form.name.trim()}>{saving ? "Saving..." : editData ? "Save changes" : "Create"}</Button></DialogFooter>
           </form>
         </DialogContent>

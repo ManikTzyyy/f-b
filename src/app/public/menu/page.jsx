@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Pagination } from "@/components/ui/pagination";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { MyTableHeader } from "@/components/layout/MyTableHeader";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, CalendarArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function PublicMenu() {
@@ -99,11 +99,11 @@ export default function PublicMenu() {
   }, [page, limit, debouncedSearch, categoryFilter]);
   return (
     <div className="bg-white min-h-screen w-full p-4 relative">
-        <div className="fixed bottom-0 z-50 left-1/2"> <Button>Order</Button></div>
-       
+      <div className="fixed bottom-0 z-50 left-1/2 mb-5">
+        <Button size="lg"><CalendarArrowDown /> Order Now!</Button>
+      </div>
 
       <TableTitle title={"Our Menu"} desc={"choose your favorite!"} />
-
 
       <MyTableHeader
         limitData={["30", "50", "100"]}
@@ -129,8 +129,7 @@ export default function PublicMenu() {
           setCategoryFilter(selectedCategory || "all");
           setPage(1);
         }}
-        className={"py-4 flex-wrap"}
-      >
+        className={"py-4 flex-wrap"}>
         <ToggleGroupItem value="all">All</ToggleGroupItem>
 
         {category.map((e) => (
@@ -166,39 +165,47 @@ export default function PublicMenu() {
                   )}
                 </div>
 
-                <div className="px-2">
-                  <span className="text-xs text-nowrap text-stone-500">{`Rp ${Number(e.price).toLocaleString("id-ID")}`}</span>
-                  <span className="text-sm text-orange-600 font-black block">
+                <div className="px-2 ">
+                  <span
+                    className={`text-xs text-nowrap  ${e.available ? "text-stone-500" : "text-muted"}  `}>{`Rp ${Number(e.price).toLocaleString("id-ID")}`}</span>
+                  <span
+                    className={`text-sm  font-black block ${e.available ? "text-orange-600" : "text-muted"}`}>
                     {e.name}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 px-2 py-4">
-                  <button
-                    className={`border rounded-full px-2 ${!quantities[e.id] && "hover:cursor-not-allowed opacity-10"}`}
-                    disabled={!quantities[e.id]}
-                    onClick={() => updateQuantity(e.id, -1)}
-                  >
-                    <Minus size={15} />
-                  </button>
+                {e.available && (
+                  <div className="flex items-center gap-2 px-2 py-4">
+                    <button
+                      className={`border rounded-full px-2 ${!quantities[e.id] && "hover:cursor-not-allowed opacity-10"}`}
+                      disabled={!quantities[e.id]}
+                      onClick={() => updateQuantity(e.id, -1)}>
+                      <Minus size={15} />
+                    </button>
 
-                  <span className="px-1 text-center">
-                    {quantities[e.id] || 0}
-                  </span>
+                    <span className="px-1 text-center">
+                      {quantities[e.id] || 0}
+                    </span>
 
-                  <button
-                    className={`border rounded-full px-2 ${!e.available && 'hover:cursor-not-allowed opacity-10'}`}
-                    disabled={!e.available}
-                    onClick={() => updateQuantity(e.id, 1)}
-                  >
-                    <Plus size={15} />
-                  </button>
-                </div>
+                    <button
+                      className={`border rounded-full px-2 ${!e.available && "hover:cursor-not-allowed opacity-10"}`}
+                      disabled={!e.available}
+                      onClick={() => updateQuantity(e.id, 1)}>
+                      <Plus size={15} />
+                    </button>
+                  </div>
+                )}
               </div>
             );
           })}
         </div>
       )}
+      <Pagination
+        loading={loading}
+        totalPages={totalPages}
+        page={page}
+        onPageChange={setPage}
+      />
     </div>
   );
 }
